@@ -1,0 +1,5 @@
+This is a dummy PDF content for testing analysis.
+It contains some key points about AI.
+1. AI is powerful.
+2. AI can code.
+3. AI helps humans.

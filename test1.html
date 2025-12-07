@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCSEStudyPal - Study Tool</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ======================================
+           CSS STYLES
+        ====================================== */
+        /* Modern Utilities */
+        :root {
+            --surface-color: #ffffff;
+            --background-color: #f3f4f6;
+            --primary-color: #4f46e5;
+            --secondary-color: #e0e7ff;
+            --text-color: #1f2937;
+            --accent-color: #10b981;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-deep: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        .dark-mode {
+            --bg-color: #1a202c;
+            --surface-color: #2d3748;
+            --text-color: #e2e8f0;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-deep: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #f7f3ff 100%);
+            color: var(--text-color);
+            transition: 0.3s;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            min-height: 600px;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-deep);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            padding: 30px 20px;
+            background-color: var(--surface-color);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 40px;
+            color: var(--accent-color);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--accent-color);
+        }
+
+        .nav-item.active {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+        }
+
+        .content-section {
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .active-section {
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .timer-card {
+            background: linear-gradient(135deg, var(--surface-color), var(--bg-color));
+            padding: 40px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-light);
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 5px rgba(79, 70, 229, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .primary-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .analyzer-card {
+            background: var(--surface-color);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .file-input {
+            margin: 20px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px dashed var(--accent-color);
+            border-radius: 8px;
+        }
+
+        .results-container {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .task-select-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .task-select-container label {
+            background-color: var(--bg-color);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+
+        .task-select-container input[type="radio"] {
+            display: none;
+        }
+
+        .task-select-container input[type="radio"]:checked+label {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .results-container h3 {
+            color: var(--secondary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .chat-window {
+            height: 400px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            overflow-y: auto;
+            background: var(--bg-color);
+            margin-bottom: 15px;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .chat-user {
+            background: var(--accent-color);
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-ai {
+            background: var(--surface-color);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            margin-right: auto;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .notes-area {
+            width: 100%;
+            height: 400px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            resize: none;
+            font-size: 1rem;
+        }
+
+        .task-item {
+            background: var(--surface-color);
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .delete-task {
+            color: red;
+            cursor: pointer;
+        }
+
+        .flashcard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .flashcard {
+            background: var(--surface-color);
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .flashcard:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .flashcard .answer {
+            display: none;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .flashcard.flipped {
+            background: var(--secondary-color);
+        }
+
+        .flashcard.flipped .question {
+            display: none;
+        }
+
+        .flashcard.flipped .answer {
+            display: block;
+        }
+    </style>
+    <!-- Mermaid.js for Mind Maps -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: false, theme: 'default' });
+    </script>
+</head>
+
+<body>
+
+    <!-- Subject Selection Modal -->
+    <div id="subject-modal"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:1000;">
+        <div
+            style="background:var(--surface-color);padding:40px;border-radius:12px;text-align:center;max-width:400px;width:90%;">
+            <h2 style="margin-bottom:20px;">Welcome! 🎓</h2>
+
+            <!-- Saved Subjects List -->
+            <div id="saved-subjects-container"
+                style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px;display:none;">
+                <!-- Buttons specific to saved subjects will go here -->
+            </div>
+
+            <p style="margin-bottom:10px;">Enter a new subject:</p>
+            <input type="text" id="subject-input" placeholder="e.g., Biology, Math..."
+                style="width:100%;padding:12px;margin-bottom:20px;border:1px solid #ccc;border-radius:8px;font-size:1.1rem;">
+            <button id="subject-confirm-btn" class="primary-btn" style="width:100%;">Start Studying</button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <h1 class="logo">MyCSEStudyPal 🎓</h1>
+
+            <div style="margin-bottom:20px;padding:10px;background:rgba(79,70,229,0.1);border-radius:8px;">
+                <small>Current Subject:</small><br>
+                <strong id="current-subject-display" style="color:var(--accent-color);font-size:1.1rem;">-</strong>
+                <br>
+                <button id="change-subject-btn"
+                    style="background:none;border:none;color:var(--secondary-color);cursor:pointer;font-size:0.9rem;margin-top:5px;text-decoration:underline;">Change
+                    Subject</button>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#" class="nav-item active" data-content="timer"><i class="fas fa-clock"></i> Pomodoro</a>
+                <a href="#" class="nav-item" data-content="analyzer"><i class="fas fa-file"></i> Analyzer</a>
+                <a href="#" class="nav-item" data-content="chat"><i class="fas fa-robot"></i> AI Chat</a>
+                <a href="#" class="nav-item" data-content="notes"><i class="fas fa-sticky-note"></i> Notes</a>
+                <a href="#" class="nav-item" data-content="tasks"><i class="fas fa-list"></i> Tasks</a>
+            </nav>
+
+            <div class="settings-toggle">
+                <button id="theme-toggle" class="primary-btn" style="padding:10px;border-radius:50%;"><i
+                        class="fas fa-moon"></i></button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <section id="timer" class="content-section active-section">
+                <h2>Focus Timer 🍅</h2>
+                <div class="timer-card">
+                    <div id="time-display" class="timer-display">25:00</div>
+                    <div id="pomodoro-sessions"
+                        style="margin-bottom:15px; font-weight:bold; color:var(--accent-color);">Sessions Completed: 0
+                    </div>
+                    <button id="start-btn" class="primary-btn"><i class="fas fa-play"></i> Start</button>
+                    <button id="reset-btn" class="primary-btn" style="background:#3b82f6"><i class="fas fa-redo"></i>
+                        Reset</button>
+                </div>
+            </section>
+
+            <section id="analyzer" class="content-section hidden">
+                <h2>AI Document Analyzer 🧠</h2>
+
+                <div class="upload-area">
+                    <input type="file" id="pdf-upload" accept=".pdf,.txt,.py,.js,.html">
+                </div>
+
+                <!-- Analyzer Tabs -->
+                <div style="margin-bottom:15px; display:flex; gap:10px;">
+                    <button class="primary-btn" id="study-tools-btn"
+                        style="flex:1; background:var(--primary-color);">Study Tools 📚</button>
+                    <button class="primary-btn" id="code-tools-btn" style="flex:1; background:#9ca3af;">Code Tools
+                        💻</button>
+                </div>
+
+                <div id="study-tools-panel">
+                    <div class="task-select-container">
+                        <input type="radio" id="task-summary" name="analysis-task" value="summary" checked><label
+                            for="task-summary">Summary</label>
+                        <input type="radio" id="task-flashcards" name="analysis-task" value="flashcards"><label
+                            for="task-flashcards">Flashcards 🗂️</label>
+                        <input type="radio" id="task-feynman" name="analysis-task" value="feynman"><label
+                            for="task-feynman">Feynman (Simple) 👶</label>
+                        <input type="radio" id="task-mindmap" name="analysis-task" value="mind_map"><label
+                            for="task-mindmap">Mind Map 🧠</label>
+                        <input type="radio" id="task-cornell" name="analysis-task" value="cornell"><label
+                            for="task-cornell">Cornell Notes 📝</label>
+                        <input type="radio" id="task-quiz" name="analysis-task" value="quiz"><label
+                            for="task-quiz">Quiz</label>
+                        <input type="radio" id="task-rap" name="analysis-task" value="rap_song"><label
+                            for="task-rap">Rap</label>
+                    </div>
+                </div>
+
+                <div id="code-tools-panel" class="hidden">
+                    <div class="task-select-container">
+                        <input type="radio" id="task-code" name="analysis-task" value="code_translate"><label
+                            for="task-code">Explain Code & Translate</label>
+                        <input type="radio" id="task-pseudocode" name="analysis-task" value="pseudocode"><label
+                            for="task-pseudocode">Pseudocode 📝</label>
+                        <input type="radio" id="task-optimization" name="analysis-task" value="optimization"><label
+                            for="task-optimization">Optimization ⚡</label>
+                    </div>
+
+                    <div id="code-options" class="hidden" style="margin-top:10px;">
+                        <label>Target Language:</label>
+                        <select id="target-lang" style="padding:5px;">
+                            <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="analyze-btn" class="primary-btn" style="width:100%; margin-top:15px;" disabled>Start
+                    Analysis</button>
+
+                <div id="results-area" class="results-container hidden">
+                    <h3>AI Output <button onclick="speakText(document.getElementById('summary-text').textContent)"
+                            style="border:none;background:none;cursor:pointer;font-size:1.2rem;">🔊</button></h3>
+                    <div id="summary-text" style="white-space:pre-wrap;"></div>
+                    <div id="mermaid-graph" class="mermaid hidden"></div>
+                </div>
+            </section>
+
+            <section id="chat" class="content-section hidden">
+                <h2>Study Assistant 🤖 (<span class="subject-name-span"></span>)</h2>
+
+                <div id="chat-window" class="chat-window">
+                    <span class="chat-message chat-ai">Hello! Ask me anything about <span
+                            class="subject-name-span"></span> 😊</span>
+                </div>
+
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="Ask a question..." style="flex:1;padding:10px;">
+                    <button id="voice-input-btn" class="primary-btn"
+                        style="background:var(--accent-color);margin-right:5px;"><i
+                            class="fas fa-microphone"></i></button>
+                    <button id="send-chat-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </section>
+
+            <section id="notes" class="content-section hidden">
+                <h2>Study Notes ✍️ (<span class="subject-name-span"></span>)</h2>
+                <textarea id="study-notes" class="notes-area" placeholder="Notes for this subject..."></textarea>
+            </section>
+
+            <section id="tasks" class="content-section hidden">
+                <h2>To-Do List ✅ (<span class="subject-name-span"></span>)</h2>
+
+                <div style="display:flex;">
+                    <input id="new-task" placeholder="Add new task..." style="flex:1;padding:10px;">
+                    <button id="add-task-btn" class="primary-btn">+</button>
+                </div>
+
+                <ul id="task-list" style="margin-top:15px;">
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Mermaid Rendering Helper
+        async function renderMermaid(graphDefinition) {
+            const element = document.getElementById('mermaid-graph');
+            element.innerHTML = graphDefinition.replace(/```mermaid/g, '').replace(/```/g, '').trim();
+            element.classList.remove('hidden');
+            try {
+                await mermaid.run({ nodes: [element] });
+            } catch (e) {
+                console.error("Mermaid Error:", e);
+                element.textContent = "Error rendering diagram. Raw: " + graphDefinition;
+            }
+        }
+
+        // Toggle Analyzer Tabs
+        const studyToolsBtn = document.getElementById('study-tools-btn');
+        const codeToolsBtn = document.getElementById('code-tools-btn');
+        const studyPanel = document.getElementById('study-tools-panel');
+        const codePanel = document.getElementById('code-tools-panel');
+
+        studyToolsBtn.onclick = () => {
+            studyPanel.classList.remove('hidden');
+            codePanel.classList.add('hidden');
+            studyToolsBtn.style.background = 'var(--primary-color)';
+            codeToolsBtn.style.background = '#9ca3af';
+            // Default selection
+            document.getElementById('task-summary').click();
+        };
+
+        codeToolsBtn.onclick = () => {
+            studyPanel.classList.add('hidden');
+            codePanel.classList.remove('hidden');
+            studyToolsBtn.style.background = '#9ca3af';
+            codeToolsBtn.style.background = 'var(--primary-color)';
+            // Default selection
+            document.getElementById('task-code').click();
+        };
+
+        /* ======================================
+            GLOBAL CONFIG
+        ====================================== */
+        const API_BASE_URL = "http://127.0.0.1:5001";
+
+        // --- SUBJECT MANAGEMENT ---
+        let currentSubject = "";
+        const subjectModal = document.getElementById("subject-modal");
+        const subjectInput = document.getElementById("subject-input");
+        const subjectConfirmBtn = document.getElementById("subject-confirm-btn");
+        const currentSubjectDisplay = document.getElementById("current-subject-display");
+        const changeSubjectBtn = document.getElementById("change-subject-btn");
+        const subjectSpans = document.querySelectorAll(".subject-name-span");
+        const savedSubjectsContainer = document.getElementById("saved-subjects-container");
+
+        // Load saved subjects from local storage
+        let savedSubjects = JSON.parse(localStorage.getItem("savedSubjects") || "[]");
+
+        function renderSavedSubjects() {
+            savedSubjectsContainer.innerHTML = "";
+            if (savedSubjects.length > 0) {
+                savedSubjectsContainer.style.display = "flex";
+                savedSubjects.forEach(sub => {
+                    const btn = document.createElement("button");
+                    btn.textContent = sub;
+                    btn.className = "primary-btn";
+                    btn.style.cssText = "background:var(--secondary-color); padding: 8px 16px; font-size: 0.9rem;";
+                    btn.onclick = () => setSubject(sub);
+                    savedSubjectsContainer.appendChild(btn);
+                });
+            } else {
+                savedSubjectsContainer.style.display = "none";
+            }
+        }
+
+        function setSubject(subject) {
+            if (!subject) return;
+            currentSubject = subject.trim();
+
+            // Save if new
+            if (!savedSubjects.includes(currentSubject)) {
+                savedSubjects.push(currentSubject);
+                localStorage.setItem("savedSubjects", JSON.stringify(savedSubjects));
+            }
+
+            currentSubjectDisplay.textContent = currentSubject;
+            subjectSpans.forEach(span => span.textContent = currentSubject);
+            subjectModal.style.display = "none";
+
+            // Reset Data Views
+            loadNotes();
+            loadTasks();
+            loadPomodoroStats();
+            loadAnalyzerResult();
+            loadChatHistory();
+        }
+
+        subjectConfirmBtn.addEventListener("click", () => {
+            setSubject(subjectInput.value);
+        });
+
+        subjectInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") setSubject(subjectInput.value);
+        });
+
+        changeSubjectBtn.addEventListener("click", () => {
+            subjectInput.value = "";
+            renderSavedSubjects(); // Show list
+            subjectModal.style.display = "flex";
+            subjectInput.focus();
+        });
+
+        // Initial Render
+        renderSavedSubjects();
+
+
+        /* ======================================
+            THEME
+        ====================================== */
+        const themeToggle = document.getElementById("theme-toggle");
+        themeToggle.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+        });
+
+        /* ======================================
+            NAVIGATION LOGIC
+        ====================================== */
+        const navItems = document.querySelectorAll(".nav-item");
+        const sections = document.querySelectorAll(".content-section");
+
+        navItems.forEach(item => {
+            item.addEventListener("click", () => {
+                navItems.forEach(n => n.classList.remove("active"));
+                item.classList.add("active");
+                const target = item.dataset.content;
+                sections.forEach(sec => sec.classList.add("hidden"));
+                sections.forEach(sec => sec.classList.remove("active-section"));
+                document.getElementById(target).classList.remove("hidden");
+                setTimeout(() => {
+                    document.getElementById(target).classList.add("active-section");
+                }, 20);
+            });
+        });
+
+        /* ======================================
+            LOCAL STORAGE (SCOPED BY SUBJECT)
+        ====================================== */
+        const notesArea = document.getElementById('study-notes');
+        const taskList = document.getElementById("task-list");
+        const newTaskInput = document.getElementById("new-task");
+        const addTaskBtn = document.getElementById("add-task-btn");
+
+        function loadNotes() {
+            notesArea.value = localStorage.getItem(`notes_${currentSubject}`) || '';
+        }
+
+        notesArea.addEventListener('input', () => {
+            if (currentSubject) localStorage.setItem(`notes_${currentSubject}`, notesArea.value);
+        });
+
+        addTaskBtn.addEventListener('click', () => {
+            const text = newTaskInput.value.trim();
+            if (text) {
+                createTaskElement(text, false);
+                newTaskInput.value = '';
+                saveTasks();
+            }
+        });
+
+        newTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTaskBtn.click();
+        });
+
+        function saveTasks() {
+            if (!currentSubject) return;
+            const tasks = [];
+            taskList.querySelectorAll('.task-item').forEach(item => {
+                const textSpan = item.querySelector('span:first-child');
+                tasks.push({
+                    text: textSpan ? textSpan.textContent.trim() : '',
+                    completed: item.classList.contains('completed')
+                });
+            });
+            localStorage.setItem(`tasks_${currentSubject}`, JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem(`tasks_${currentSubject}`) || '[]');
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                createTaskElement(task.text, task.completed);
+            });
+        }
+
+        function createTaskElement(text, completed = false) {
+            const li = document.createElement("li");
+            li.className = `task-item ${completed ? 'completed' : ''}`;
+
+            const taskTextSpan = document.createElement("span");
+            taskTextSpan.textContent = text;
+            taskTextSpan.style.cssText = 'flex-grow: 1; min-width: 10px; cursor: text; margin-right: 15px;';
+            li.appendChild(taskTextSpan);
+
+            const deleteSpan = document.createElement("span");
+            deleteSpan.className = "delete-task";
+            deleteSpan.textContent = '×';
+            deleteSpan.style.cssText = 'color:red; cursor:pointer; font-size: 1.2rem; font-weight: bold;';
+            li.appendChild(deleteSpan);
+
+            li.addEventListener('click', (e) => {
+                if (!taskTextSpan.hasAttribute('contenteditable') || taskTextSpan.contentEditable === 'false') {
+                    li.classList.toggle('completed');
+                    saveTasks();
+                }
+            });
+
+            taskTextSpan.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                if (li.classList.contains('completed')) return;
+                taskTextSpan.contentEditable = true;
+                taskTextSpan.focus();
+            });
+
+            taskTextSpan.addEventListener('blur', () => {
+                taskTextSpan.contentEditable = false;
+                saveTasks();
+            });
+
+            taskTextSpan.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    taskTextSpan.blur();
+                }
+            });
+
+            deleteSpan.addEventListener('click', (e) => {
+                e.stopPropagation();
+                li.remove();
+                saveTasks();
+            });
+
+            taskList.appendChild(li);
+        }
+
+
+        /* ======================================
+            POMODORO TIMER (Simple)
+        ====================================== */
+        const timeDisplay = document.getElementById("time-display");
+        const sessionDisplay = document.getElementById("pomodoro-sessions");
+        const startBtn = document.getElementById("start-btn");
+        const resetBtn = document.getElementById("reset-btn");
+        let timerInterval;
+        let timeInSeconds = 25 * 60;
+
+        function loadPomodoroStats() {
+            const count = localStorage.getItem(`pomodoro_stats_${currentSubject}`) || 0;
+            sessionDisplay.textContent = `Sessions Completed: ${count}`;
+        }
+
+        function updateSessions() {
+            let count = parseInt(localStorage.getItem(`pomodoro_stats_${currentSubject}`) || 0);
+            count++;
+            localStorage.setItem(`pomodoro_stats_${currentSubject}`, count);
+            sessionDisplay.textContent = `Sessions Completed: ${count}`;
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeInSeconds / 60).toString().padStart(2, '0');
+            const seconds = (timeInSeconds % 60).toString().padStart(2, '0');
+            timeDisplay.textContent = `${minutes}:${seconds}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+
+            timerInterval = setInterval(() => {
+                if (timeInSeconds > 0) {
+                    timeInSeconds--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+                    alert("Time is up! Take a break.");
+                    if (currentSubject) updateSessions();
+                }
+            }, 1000);
+        }
+
+        startBtn.onclick = () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+            } else {
+                startTimer();
+                startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
+        };
+
+        resetBtn.onclick = () => {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timeInSeconds = 25 * 60;
+            updateDisplay();
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+        };
+
+        updateDisplay();
+
+        /* ======================================
+            DOCUMENT ANALYZER (AI)
+        ====================================== */
+        const pdfUpload = document.getElementById("pdf-upload");
+        const analyzeBtn = document.getElementById("analyze-btn");
+        const summaryText = document.getElementById("summary-text");
+        const resultsArea = document.getElementById("results-area");
+        const codeOptions = document.getElementById("code-options");
+        const targetLang = document.getElementById("target-lang");
+        const mermaidGraph = document.getElementById("mermaid-graph");
+
+        let currentTask = "summary";
+
+        function loadAnalyzerResult() {
+            const savedResult = localStorage.getItem(`analyzer_result_${currentSubject}`);
+            const savedType = localStorage.getItem(`analyzer_type_${currentSubject}`);
+
+            summaryText.innerHTML = "";
+            mermaidGraph.innerHTML = "";
+            mermaidGraph.classList.add("hidden");
+
+            if (savedResult) {
+                if (savedType === "flashcards") {
+                    renderFlashcards(savedResult);
+                } else if (savedType === "mind_map") {
+                    renderMermaid(savedResult);
+                } else {
+                    summaryText.innerHTML = savedResult; // HTML needed for Cornell
+                }
+                resultsArea.classList.remove("hidden");
+            } else {
+                resultsArea.classList.toggle("hidden", true);
+            }
+        }
+
+        function renderFlashcards(jsonString) {
+            summaryText.innerHTML = ""; // Clear text
+            try {
+                // Handle potential markdown code blocks if AI fails instruction
+                const cleanJson = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
+                const cards = JSON.parse(cleanJson);
+
+                const container = document.createElement("div");
+                container.className = "flashcard-container";
+
+                cards.forEach(card => {
+                    const cardDiv = document.createElement("div");
+                    cardDiv.className = "flashcard";
+                    cardDiv.innerHTML = `
+                        <div class="question">${card.question}</div>
+                        <div class="answer">${card.answer}</div>
+                    `;
+                    cardDiv.onclick = () => cardDiv.classList.toggle("flipped");
+                    container.appendChild(cardDiv);
+                });
+
+                summaryText.appendChild(container);
+            } catch (e) {
+                console.error("JSON Parse Error", e);
+                summaryText.textContent = "Error parsing flashcards: " + jsonString;
+            }
+        }
+
+        document.querySelectorAll("input[name='analysis-task']").forEach(radio => {
+            radio.addEventListener("change", () => {
+                currentTask = radio.value;
+                if (currentTask === "code_translate" || currentTask === "pseudocode" || currentTask === "optimization") {
+                    if (currentTask === "code_translate") codeOptions.classList.remove("hidden");
+                    else codeOptions.classList.add("hidden");
+                } else {
+                    codeOptions.classList.add("hidden");
+                }
+            });
+        });
+
+        pdfUpload.onchange = () => {
+            analyzeBtn.disabled = pdfUpload.files.length === 0;
+        };
+
+        analyzeBtn.onclick = async () => {
+            const file = pdfUpload.files[0];
+            const form = new FormData();
+            form.append("file", file);
+            form.append("task", currentTask);
+            form.append("target_lang", targetLang.value);
+            form.append("subject", currentSubject); // SEND SUBJECT
+
+            analyzeBtn.textContent = "Analyzing...";
+            resultsArea.classList.add("hidden");
+            summaryText.innerHTML = "";
+            mermaidGraph.classList.add("hidden");
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/analyze`, {
+                    method: "POST",
+                    body: form
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    summaryText.textContent = `Server Error (${res.status}): ${data.error || 'Could not process request.'}`;
+                } else {
+                    // Logic to Render Different Types
+                    if (currentTask === "flashcards") {
+                        renderFlashcards(data.content);
+                    } else if (currentTask === "mind_map") {
+                        renderMermaid(data.content);
+                    } else {
+                        summaryText.innerHTML = data.content;
+                    }
+
+                    if (currentSubject) {
+                        localStorage.setItem(`analyzer_result_${currentSubject}`, data.content);
+                        localStorage.setItem(`analyzer_type_${currentSubject}`, currentTask);
+                    }
+                }
+
+            } catch (error) {
+                console.error("Fetch failed:", error);
+                summaryText.textContent = `NETWORK ERROR: Could not connect to the backend server.`;
+            } finally {
+                resultsArea.classList.remove("hidden");
+                analyzeBtn.textContent = "Start Analysis";
+            }
+        };
+
+        /* ======================================
+            ACCESSIBILITY (TTS & STT)
+        ====================================== */
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop previous
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Text-to-Speech not supported in this browser.");
+            }
+        }
+
+        const voiceInputBtn = document.getElementById("voice-input-btn");
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+
+            voiceInputBtn.onclick = () => {
+                recognition.start();
+                voiceInputBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                chatInput.value = transcript;
+                voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                chatInput.focus();
+            };
+
+            recognition.onerror = () => {
+                voiceInputBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                setTimeout(() => voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i>', 2000);
+            };
+
+            recognition.onend = () => {
+                voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            };
+        } else {
+            voiceInputBtn.style.display = 'none'; // Hide if not supported
+        }
+
+        /* ======================================
+            CHAT SYSTEM (AI)
+        ====================================== */
+        const chatWindow = document.getElementById("chat-window");
+        const chatInput = document.getElementById("chat-input");
+        const sendChatBtn = document.getElementById("send-chat-btn");
+
+        function loadChatHistory() {
+            chatWindow.innerHTML = ""; // Clear
+            const history = JSON.parse(localStorage.getItem(`chat_history_${currentSubject}`) || "[]");
+
+            if (history.length === 0) {
+                chatWindow.innerHTML = `<span class="chat-message chat-ai">Hello! Ask me anything about ${currentSubject} 😊</span>`;
+            } else {
+                history.forEach(msg => appendChatToDOM(msg.text, msg.type));
+            }
+        }
+
+        function appendChatToDOM(text, type) {
+            const msg = document.createElement("span");
+            msg.className = `chat-message chat-${type}`;
+
+            // Add Speak Button for AI messages
+            if (type === 'ai') {
+                const speakBtn = document.createElement("button");
+                speakBtn.innerHTML = "🔊";
+                speakBtn.style.cssText = "border:none;background:none;cursor:pointer;margin-left:8px;font-size:0.9rem;opacity:0.7;";
+                speakBtn.onclick = () => speakText(text);
+
+                // Wrap text and button
+                const contentSpan = document.createElement("span");
+                contentSpan.textContent = text;
+                msg.textContent = "";
+                msg.appendChild(contentSpan);
+                msg.appendChild(speakBtn);
+            } else {
+                msg.textContent = text;
+            }
+
+            chatWindow.appendChild(msg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function appendChat(text, type) {
+            appendChatToDOM(text, type);
+            // Save to LocalStorage
+            if (currentSubject) {
+                const history = JSON.parse(localStorage.getItem(`chat_history_${currentSubject}`) || "[]");
+                history.push({ text, type });
+                localStorage.setItem(`chat_history_${currentSubject}`, JSON.stringify(history));
+            }
+        }
+
+        const handleChatSend = async () => {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            appendChat(message, "user");
+            chatInput.value = "";
+
+            const thinkingMsg = document.createElement("span");
+            thinkingMsg.className = "chat-message chat-ai";
+            thinkingMsg.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Thinking...';
+            chatWindow.appendChild(thinkingMsg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/chat`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message, subject: currentSubject }) // SEND SUBJECT
+                });
+
+                const data = await res.json();
+
+                chatWindow.removeChild(thinkingMsg);
+
+                if (!res.ok) {
+                    appendChat(`Server Error: ${data.error || 'Check backend logs.'}`, "ai");
+                } else {
+                    appendChat(data.response || data.error, "ai");
+                }
+
+            } catch (error) {
+                chatWindow.removeChild(thinkingMsg);
+                appendChat("NETWORK ERROR: Cannot reach the chat server.", "ai");
+            }
+        };
+
+        sendChatBtn.onclick = handleChatSend;
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleChatSend();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
